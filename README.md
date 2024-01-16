@@ -8,7 +8,12 @@ Download from https://github.com/2624789/.
 
 ## Usage
 
-    $ java -jar invoices-0.1.0-standalone.jar [args]
+    $ lein run
+
+or
+
+    $ lein uberjar
+    $ java -jar target/uberjar/invoices-0.1.0-SNAPSHOT-standalone.jar
 
 ## Options
 
