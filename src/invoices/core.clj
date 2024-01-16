@@ -1,6 +1,7 @@
 (ns invoices.core
-  (:require [invoice-items :as ii]
-            [clojure.data.json :as json])
+  (:require [clojure.data.json :as json]
+            [invoice-items :as ii]
+            [invoice-spec :as is])
   (:use clojure.pprint)
   (:gen-class))
 
@@ -11,10 +12,13 @@
   [file-name]
   (json/read-str (slurp file-name)))
 
+(def invoice-from-json (file->invoice "invoice.json"))
+
 (defn -main
   "Demo features"
   [& args]
   (do (println "\nInvoice items that satisfy given conditions:\n")
       (pprint (ii/find-invoice-items (:invoice/items invoice)))
       (println "\nInvoice from JSON file:\n")
-      (pprint (file->invoice "invoice.json"))))
+      (println (str "is valid?: " (is/is-valid-invoice? invoice-from-json)))
+      (pprint invoice-from-json)))
