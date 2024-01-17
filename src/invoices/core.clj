@@ -33,10 +33,10 @@
 ;;;;
 (defn rename-items-keys
   [items]
-  (mapv #(cs/rename-keys % {"price" :invoice-item/price
+  (mapv #(cs/rename-keys % {"price"   :invoice-item/price
                            "quantity" :invoice-item/quantity
-                           "sku" :invoice-item/sku
-                           "taxes" :invoice-item/taxes})
+                           "sku"      :invoice-item/sku
+                           "taxes"    :invoice-item/taxes})
         items))
 
 ;;;;
@@ -45,9 +45,9 @@
 
 (defn rename-taxes-keys
   [taxes]
-  (into [] (map #(cs/rename-keys % {"tax_category" :tax/category
-                                   "tax_rate"     :tax/rate})
-               taxes)))
+  (mapv #(cs/rename-keys % {"tax_category" :tax/category
+                            "tax_rate"     :tax/rate})
+        taxes))
 
 (defn rename-item-taxes
   [item]
@@ -55,11 +55,7 @@
 
 (defn rename-items-taxes-keys
   [items]
-  (into [] (map #(rename-item-taxes %) items)))
-
-(defn rename-invoice-items-taxes-keys
-  [invoice]
-  (update-in invoice [:invoice/items] rename-items-taxes-keys))
+  (mapv #(rename-item-taxes %) items))
 
 ;;;;
 ;; Taxes Cat
@@ -75,11 +71,7 @@
 
 (defn format-items-taxes-cat
   [items]
-  (into [] (map #(format-item-taxes-cat %) items)))
-
-(defn format-invoice-items-taxes-cat
-  [invoice]
-  (update-in invoice [:invoice/items] format-items-taxes-cat))
+  (mapv #(format-item-taxes-cat %) items))
 
 ;;;;
 ;; Taxes Rate
@@ -95,11 +87,7 @@
 
 (defn format-items-taxes-rate
   [items]
-  (into [] (map #(format-item-taxes-rate %) items)))
-
-(defn format-invoice-items-taxes-rate
-  [invoice]
-  (update-in invoice [:invoice/items] format-items-taxes-rate))
+  (mapv #(format-item-taxes-rate %) items))
 
 (defn valid-invoice
   [invoice]
@@ -113,9 +101,9 @@
                  cs/rename-keys {"company_name" :customer/name
                                  "email" :customer/email})
       (update-in [:invoice/items] rename-items-keys)
-      (rename-invoice-items-taxes-keys)
-      (format-invoice-items-taxes-cat)
-      (format-invoice-items-taxes-rate)))
+      (update-in [:invoice/items] rename-items-taxes-keys)
+      (update-in [:invoice/items] format-items-taxes-cat)
+      (update-in [:invoice/items] format-items-taxes-rate)))
 
 (defn -main
   "Demo features"
