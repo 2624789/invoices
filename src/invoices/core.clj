@@ -1,6 +1,5 @@
 (ns invoices.core
   (:require [clojure.data.json :as json]
-            [clojure.data.json :as json]
             [clojure.instant :as ci]
             [clojure.set :as cs]
             [clojure.string :as cst]
@@ -18,6 +17,9 @@
 
 (def invoice-from-json (file->invoice "invoice.json"))
 
+;;;;
+;; invoice
+;;;;
 (defn remove-root-key
   [invoice]
   (get invoice "invoice"))
@@ -28,6 +30,9 @@
                            "customer" :invoice/customer
                            "items" :invoice/items}))
 
+;;;;
+;; issue-date
+;;;;
 (defn date-string->inst
   [date-str]
   (ci/read-instant-date (cst/join "-" (reverse (cst/split date-str #"/")))))
@@ -36,11 +41,18 @@
   [invoice]
   (update-in invoice [:invoice/issue-date] date-string->inst))
 
+;;;;
+;; customer
+;;;;
 (defn rename-customer-keys
   [invoice]
   (update-in invoice [:invoice/customer]
              cs/rename-keys {"company_name" :customer/name
                              "email" :customer/email}))
+
+;;;;
+;; Items keys
+;;;;
 
 (defn rename-items-keys
   [items]
@@ -52,8 +64,11 @@
 
 (defn rename-invoice-items-keys
   [invoice]
-  (update-in invoice [:invoice/items]
-             rename-items-keys))
+  (update-in invoice [:invoice/items] rename-items-keys))
+
+;;;;
+;; Taxes keys
+;;;;
 
 (defn rename-taxes-keys
   [taxes]
@@ -63,8 +78,7 @@
 
 (defn rename-item-taxes
   [item]
-  (update-in item [:invoice-item/taxes]
-             rename-taxes-keys))
+  (update-in item [:invoice-item/taxes] rename-taxes-keys))
 
 (defn rename-items-taxes-keys
   [items]
@@ -72,8 +86,11 @@
 
 (defn rename-invoice-items-taxes-keys
   [invoice]
-  (update-in invoice [:invoice/items]
-             rename-items-taxes-keys))
+  (update-in invoice [:invoice/items] rename-items-taxes-keys))
+
+;;;;
+;; Taxes Cat
+;;;;
 
 (defn format-taxes-cat
   [taxes]
@@ -81,8 +98,7 @@
 
 (defn format-item-taxes-cat
   [item]
-  (update-in item [:invoice-item/taxes]
-             format-taxes-cat))
+  (update-in item [:invoice-item/taxes] format-taxes-cat))
 
 (defn format-items-taxes-cat
   [items]
@@ -90,8 +106,11 @@
 
 (defn format-invoice-items-taxes-cat
   [invoice]
-  (update-in invoice [:invoice/items]
-             format-items-taxes-cat))
+  (update-in invoice [:invoice/items] format-items-taxes-cat))
+
+;;;;
+;; Taxes Rate
+;;;;
 
 (defn format-taxes-rate
   [taxes]
@@ -99,8 +118,7 @@
 
 (defn format-item-taxes-rate
   [item]
-  (update-in item [:invoice-item/taxes]
-             format-taxes-rate))
+  (update-in item [:invoice-item/taxes] format-taxes-rate))
 
 (defn format-items-taxes-rate
   [items]
@@ -108,8 +126,7 @@
 
 (defn format-invoice-items-taxes-rate
   [invoice]
-  (update-in invoice [:invoice/items]
-             format-items-taxes-rate))
+  (update-in invoice [:invoice/items] format-items-taxes-rate))
 
 (defn valid-invoice
   [invoice]
