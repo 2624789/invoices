@@ -24,11 +24,9 @@
   [invoice]
   (get invoice "invoice"))
 
-(defn rename-invoice-keys
-  [invoice]
-  (cs/rename-keys invoice {"issue_date" :invoice/issue-date
-                           "customer" :invoice/customer
-                           "items" :invoice/items}))
+(defn rename-keys
+  [invoice key-map]
+  (cs/rename-keys invoice key-map))
 
 ;;;;
 ;; issue-date
@@ -130,9 +128,11 @@
 
 (defn valid-invoice
   [invoice]
-  (->> invoice
+  (-> invoice
        (remove-root-key)
-       (rename-invoice-keys)
+       (rename-keys {"issue_date" :invoice/issue-date
+                     "customer" :invoice/customer
+                     "items" :invoice/items})
        (format-issue-date)
        (rename-customer-keys)
        (rename-invoice-items-keys)
