@@ -108,18 +108,18 @@
 (defn valid-invoice
   [invoice]
   (-> invoice
-       (get "invoice")
-       (cs/rename-keys {"issue_date" :invoice/issue-date
-                        "customer" :invoice/customer
-                        "items" :invoice/items})
-       (update-in [:invoice/issue-date] date-string->inst)
-       (update-in [:invoice/customer]
-                  cs/rename-keys {"company_name" :customer/name
-                                  "email" :customer/email})
-       (rename-invoice-items-keys)
-       (rename-invoice-items-taxes-keys)
-       (format-invoice-items-taxes-cat)
-       (format-invoice-items-taxes-rate)))
+      (get "invoice")
+      (cs/rename-keys {"issue_date" :invoice/issue-date
+                       "customer" :invoice/customer
+                       "items" :invoice/items})
+      (update-in [:invoice/issue-date] date-string->inst)
+      (update-in [:invoice/customer]
+                 cs/rename-keys {"company_name" :customer/name
+                                 "email" :customer/email})
+      (rename-invoice-items-keys)
+      (rename-invoice-items-taxes-keys)
+      (format-invoice-items-taxes-cat)
+      (format-invoice-items-taxes-rate)))
 
 (defn -main
   "Demo features"
