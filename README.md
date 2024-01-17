@@ -15,6 +15,10 @@ or
     $ lein uberjar
     $ java -jar target/uberjar/invoices-0.1.0-SNAPSHOT-standalone.jar
 
+## Test
+
+    $ lein test
+
 ## Options
 
 None
