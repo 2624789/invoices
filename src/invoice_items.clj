@@ -30,3 +30,15 @@
   (->> items
        (filter has-iva-or-ret?)
        (remove has-iva-and-ret?)))
+
+(defn- discount-factor [{:keys [discount-rate]
+                         :or   {discount-rate 0}}]
+  (- 1 (/ discount-rate 100.0)))
+
+;; TODO: Safe handle negative values
+(defn subtotal
+  "calculates the subtotal of an invoice-item taking a discount-rate into account"
+  [{:keys [precise-quantity precise-price discount-rate]
+    :as   item
+    :or   {discount-rate 0}}]
+  (* precise-price precise-quantity (discount-factor item)))
