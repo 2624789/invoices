@@ -29,7 +29,7 @@
   (ci/read-instant-date (cst/join "-" (reverse (cst/split date-str #"/")))))
 
 ;;;;
-;; Items keys
+;; Items
 ;;;;
 (defn rename-items-keys
   [items]
@@ -40,7 +40,7 @@
         items))
 
 ;;;;
-;; Taxes keys
+;; Taxes
 ;;;;
 
 (defn rename-taxes-keys
@@ -53,33 +53,21 @@
   [item]
   (update-in item [:invoice-item/taxes] rename-taxes-keys))
 
-;;;;
-;; Taxes Cat
-;;;;
-
 (defn format-taxes-cat
   [taxes]
-  (into [] (map #(assoc % :tax/category :iva) taxes)))
+  (mapv #(assoc % :tax/category :iva) taxes))
 
 (defn format-item-taxes-cat
   [item]
   (update-in item [:invoice-item/taxes] format-taxes-cat))
 
-;;;;
-;; Taxes Rate
-;;;;
-
 (defn format-taxes-rate
   [taxes]
-  (into [] (map #(update % :tax/rate double) taxes)))
+  (mapv #(update % :tax/rate double) taxes))
 
 (defn format-item-taxes-rate
   [item]
   (update-in item [:invoice-item/taxes] format-taxes-rate))
-
-(defn format-items-taxes-rate
-  [items]
-  (mapv #(format-item-taxes-rate %) items))
 
 (defn valid-invoice
   [invoice]
