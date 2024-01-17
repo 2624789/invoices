@@ -36,3 +36,7 @@
 (defn is-valid-invoice?
   [invoice]
   (s/valid? ::invoice invoice))
+
+(defn validate-invoice
+  [invoice]
+  (s/explain ::invoice invoice))
