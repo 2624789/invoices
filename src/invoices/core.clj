@@ -33,15 +33,11 @@
 ;;;;
 (defn rename-items-keys
   [items]
-  (into [] (map #(cs/rename-keys % {"price" :invoice-item/price
-                                    "quantity" :invoice-item/quantity
-                                    "sku" :invoice-item/sku
-                                    "taxes" :invoice-item/taxes})
-                items)))
-
-(defn rename-invoice-items-keys
-  [invoice]
-  (update-in invoice [:invoice/items] rename-items-keys))
+  (mapv #(cs/rename-keys % {"price" :invoice-item/price
+                           "quantity" :invoice-item/quantity
+                           "sku" :invoice-item/sku
+                           "taxes" :invoice-item/taxes})
+        items))
 
 ;;;;
 ;; Taxes keys
@@ -116,7 +112,7 @@
       (update-in [:invoice/customer]
                  cs/rename-keys {"company_name" :customer/name
                                  "email" :customer/email})
-      (rename-invoice-items-keys)
+      (update-in [:invoice/items] rename-items-keys)
       (rename-invoice-items-taxes-keys)
       (format-invoice-items-taxes-cat)
       (format-invoice-items-taxes-rate)))
