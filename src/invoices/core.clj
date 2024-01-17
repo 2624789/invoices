@@ -10,6 +10,9 @@
 
 (def invoice (clojure.edn/read-string (slurp "invoice.edn")))
 
+;;;;
+;; JSON file
+;;;;
 (defn file->invoice
   "Converts an invoice json file to a clojure map"
   [file-name]
@@ -18,40 +21,16 @@
 (def invoice-from-json (file->invoice "invoice.json"))
 
 ;;;;
-;; invoice
-;;;;
-(defn remove-root-key
-  [invoice]
-  (get invoice "invoice"))
-
-(defn rename-keys
-  [invoice key-map]
-  (cs/rename-keys invoice key-map))
-
-;;;;
-;; issue-date
+;; date-format
 ;;;;
 (defn date-string->inst
+  "Receives a date string in format DD/MM/YYYY and returns an instant"
   [date-str]
   (ci/read-instant-date (cst/join "-" (reverse (cst/split date-str #"/")))))
-
-(defn format-issue-date
-  [invoice]
-  (update-in invoice [:invoice/issue-date] date-string->inst))
-
-;;;;
-;; customer
-;;;;
-(defn rename-customer-keys
-  [invoice]
-  (update-in invoice [:invoice/customer]
-             cs/rename-keys {"company_name" :customer/name
-                             "email" :customer/email}))
 
 ;;;;
 ;; Items keys
 ;;;;
-
 (defn rename-items-keys
   [items]
   (into [] (map #(cs/rename-keys % {"price" :invoice-item/price
@@ -129,12 +108,14 @@
 (defn valid-invoice
   [invoice]
   (-> invoice
-       (remove-root-key)
-       (rename-keys {"issue_date" :invoice/issue-date
-                     "customer" :invoice/customer
-                     "items" :invoice/items})
-       (format-issue-date)
-       (rename-customer-keys)
+       (get "invoice")
+       (cs/rename-keys {"issue_date" :invoice/issue-date
+                        "customer" :invoice/customer
+                        "items" :invoice/items})
+       (update-in [:invoice/issue-date] date-string->inst)
+       (update-in [:invoice/customer]
+                  cs/rename-keys {"company_name" :customer/name
+                                  "email" :customer/email})
        (rename-invoice-items-keys)
        (rename-invoice-items-taxes-keys)
        (format-invoice-items-taxes-cat)
